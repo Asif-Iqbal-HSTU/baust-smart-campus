@@ -1,0 +1,144 @@
+name: baust_campus
+
+# Mirrors the OBE-Nationwide `campus` stack (app + MySQL 8.4 + Cloudflare Tunnel).
+# All settings come from .env.docker (copy .env.docker.example). The project's
+# own .env stays reserved for running natively with `php artisan serve`.
+#
+#   docker compose up -d --build                     # app + MySQL -> http://localhost:8088
+#   docker compose --profile tunnel up -d            # also start the Cloudflare Tunnel
+
+services:
+    # ====================================
+    #         Laravel Application
+    # ====================================
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: baust_campus_app:latest
+        container_name: baust_campus_app
+        restart: unless-stopped
+        env_file: .env.docker
+        environment:
+            - APP_NAME=BAUST CAMPUS
+            - TZ=Asia/Dhaka
+            - DB_CONNECTION=mysql
+            - DB_HOST=mysql
+            - DB_PORT=3306
+            - LOG_CHANNEL=stderr
+        ports:
+            - '127.0.0.1:8088:80' # Local access; public traffic arrives via the tunnel
+        security_opt:
+            - no-new-privileges:true
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 512M
+                reservations:
+                    memory: 128M
+        logging:
+            driver: json-file
+            options:
+                max-size: '10m'
+                max-file: '3'
+        depends_on:
+            mysql:
+                condition: service_healthy
+        networks:
+            - frontend
+            - backend
+        volumes:
+            - app_storage:/var/www/html/storage
+
+    # ====================================
+    #  MySQL 8.4 Database (db: baust_campus)
+    # ====================================
+    mysql:
+        image: mysql:8.4
+        container_name: baust_campus_mysql
+        restart: unless-stopped
+        env_file: .env.docker
+        security_opt:
+            - no-new-privileges:true
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 1G
+                reservations:
+                    memory: 256M
+        logging:
+            driver: json-file
+            options:
+                max-size: '10m'
+                max-file: '3'
+        command:
+            - --skip-name-resolve
+            - --max-connections=100
+            - --local-infile=0
+        volumes:
+            - mysql_data:/var/lib/mysql
+        ports:
+            - '127.0.0.1:3311:3306' # For DB tools (HeidiSQL, Workbench, ...) on this PC
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'mysqladmin ping -h localhost -u root -p"$$MYSQL_ROOT_PASSWORD"',
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+        networks:
+            - backend
+            - dbaccess
+
+    # ====================================
+    #         Cloudflare Tunnel
+    # ====================================
+    # Off until a domain is chosen. Dashboard Public Hostname:
+    #   <your-domain> -> http://baust_campus_app:80
+    cloudflared:
+        image: cloudflare/cloudflared:latest
+        container_name: baust_campus_tunnel
+        profiles: ['tunnel']
+        restart: unless-stopped
+        command: tunnel --no-autoupdate run
+        env_file: .env.docker
+        read_only: true
+        security_opt:
+            - no-new-privileges:true
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 256M
+                reservations:
+                    memory: 64M
+        logging:
+            driver: json-file
+            options:
+                max-size: '5m'
+                max-file: '3'
+        depends_on:
+            app:
+                condition: service_started
+        networks:
+            - frontend
+
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        internal: true
+        driver: bridge
+    dbaccess:
+        driver: bridge
+
+volumes:
+    mysql_data:
+        driver: local
+    app_storage:
+        driver: local

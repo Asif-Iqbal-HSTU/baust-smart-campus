@@ -1,0 +1,64 @@
+# Dependencies (installed in container)
+node_modules
+vendor
+
+# Version control
+.git
+.gitattributes
+.gitignore
+.github
+
+# IDE, editor & AI tooling
+.idea
+.vscode
+.claude
+.agents
+.junie
+.cursor
+.mcp.json
+boost.json
+AGENTS.md
+CLAUDE.md
+*.swp
+
+# Environment files (sensitive)
+.env
+.env.*
+!.env.example
+
+# Build artifacts (rebuilt in image)
+public/build
+public/hot
+public/storage
+public/fonts-manifest.dev.json
+bootstrap/ssr
+bootstrap/cache/*.php
+resources/js/actions
+resources/js/routes
+resources/js/wayfinder
+
+# Local SQLite database (the container uses MySQL)
+database/*.sqlite
+
+# Testing
+tests
+phpunit.xml
+.phpunit.cache
+.phpunit.result.cache
+
+# Docker files (avoid recursive context)
+compose*.yml
+Dockerfile
+.dockerignore
+docker/windows-autostart.ps1
+
+# Runtime state
+storage/logs/*
+storage/pail
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Source data with personal information and design briefs
+files
+brief

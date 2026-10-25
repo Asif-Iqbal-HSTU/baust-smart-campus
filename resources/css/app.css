@@ -1,0 +1,204 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-brand: var(--brand);
+    --color-brand-foreground: var(--brand-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+    color-scheme: light;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.87 0 0);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.625rem;
+    /* BAUST logo green */
+    --brand: #00904c;
+    --brand-foreground: #ffffff;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.87 0 0);
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/*
+ * Glass sidebar menu items (NavMain). Kept outside @layer on purpose so it
+ * wins over the shadcn sidebar's data-[active=true] utility classes.
+ */
+.nav-glass {
+    isolation: isolate;
+    transition:
+        background 200ms ease,
+        box-shadow 200ms ease,
+        color 200ms ease;
+}
+
+.nav-glass:not([data-active='true']):hover {
+    background: rgb(255 255 255 / 0.65);
+    box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.9),
+        0 1px 2px rgb(15 23 42 / 0.06);
+}
+
+.nav-glass[data-active='true'] {
+    position: relative;
+    color: #0b3b24;
+    background: linear-gradient(
+        135deg,
+        rgb(255 255 255 / 0.95) 0%,
+        rgb(236 250 243 / 0.8) 45%,
+        rgb(210 242 225 / 0.7) 100%
+    );
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 1),
+        inset 0 0 0 1px rgb(255 255 255 / 0.75),
+        inset 0 -1px 0 rgb(0 144 76 / 0.14),
+        0 0 0 1px rgb(0 144 76 / 0.2),
+        0 6px 16px -6px rgb(0 144 76 / 0.4),
+        0 2px 4px -1px rgb(15 23 42 / 0.08);
+}
+
+/* Glossy top sheen */
+.nav-glass[data-active='true']::before {
+    content: '';
+    position: absolute;
+    inset: 1px 1px 50% 1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.9),
+        rgb(255 255 255 / 0)
+    );
+    pointer-events: none;
+}
+
+/* One light sweep when an item becomes active */
+.nav-glass[data-active='true']::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(
+        110deg,
+        transparent 30%,
+        rgb(255 255 255 / 0.85) 50%,
+        transparent 70%
+    );
+    transform: translateX(-120%);
+    animation: nav-glass-shine 900ms ease-out 150ms 1 forwards;
+    pointer-events: none;
+}
+
+.nav-glass[data-active='true'] svg {
+    color: var(--brand);
+    filter: drop-shadow(0 1px 1px rgb(0 144 76 / 0.3));
+}
+
+@keyframes nav-glass-shine {
+    to {
+        transform: translateX(120%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-glass[data-active='true']::after {
+        animation: none;
+        opacity: 0;
+    }
+}
